@@ -37,22 +37,22 @@ class TestQueryArgs(object):
         parser.clear_cache()
 
     def test_it_should_get_single_values(self):
-        query = [(name, value)]
+        query = [(name, bvalue)]
         arg = Arg(multiple=False)
         request = make_get_request(query)
 
         result = parser.parse_querystring(request, name, arg)
 
-        assert result == bvalue
+        assert result == value
 
     def test_it_should_get_multiple_values(self):
-        query = [(name, value), (name, value)]
+        query = [(name, bvalue), (name, bvalue)]
         arg = Arg(multiple=True)
         request = make_get_request(query)
 
         result = parser.parse_querystring(request, name, arg)
 
-        assert result == [bvalue, bvalue]
+        assert result == [value, value]
 
     def test_it_should_return_missing_if_not_present(self):
         query = []
@@ -82,22 +82,22 @@ class TestFormArgs(object):
         parser.clear_cache()
 
     def test_it_should_get_single_values(self):
-        query = [(name, value)]
+        query = [(name, bvalue)]
         arg = Arg(multiple=False)
         request = make_form_request(query)
 
         result = parser.parse_form(request, name, arg)
 
-        assert result == bvalue
+        assert result == value
 
     def test_it_should_get_multiple_values(self):
-        query = [(name, value), (name, value)]
+        query = [(name, bvalue), (name, bvalue)]
         arg = Arg(multiple=True)
         request = make_form_request(query)
 
         result = parser.parse_form(request, name, arg)
 
-        assert result == [bvalue, bvalue]
+        assert result == [value, value]
 
     def test_it_should_return_missing_if_not_present(self):
         query = []
@@ -289,7 +289,7 @@ class TestParse(object):
         parsed = parser.parse(attrs, request)
 
         assert parsed['integer'] == [1, 2]
-        assert parsed['string'] == bvalue
+        assert parsed['string'] == value
 
     def test_parsing_clears_cache(self):
         request = make_json_request({
@@ -318,7 +318,7 @@ class TestParse(object):
         parsed = parser.parse(attrs, request)
 
         assert parsed['integer'] == [1, 2]
-        assert parsed['string'] == bvalue
+        assert parsed['string'] == value
 
     def test_it_should_parse_json_arguments(self):
         attrs = {

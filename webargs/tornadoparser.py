@@ -20,6 +20,7 @@ import functools
 import logging
 
 import tornado.web
+from tornado.escape import to_unicode
 
 from webargs import core
 
@@ -41,7 +42,7 @@ def parse_json_body(req):
     return {}
 
 
-def get_value(d, name, multiple):
+def get_value(d, name, multiple, cast_to_unicode=True):
     """Handle gets from 'multidicts' made of lists
 
     It handles cases: ``{"key": [value]}`` and ``{"key": value}``
@@ -49,10 +50,13 @@ def get_value(d, name, multiple):
     value = d.get(name, core.Missing)
 
     if multiple and value is not core.Missing:
-        return [] if value is core.Missing else value
+        if cast_to_unicode:
+            value = [to_unicode(i) for i in value]
 
-    if value and isinstance(value, (list, tuple)):
-        return value[0]
+    elif value and isinstance(value, (list, tuple)):
+        value = value[0]
+        if cast_to_unicode:
+            value = to_unicode(value)
 
     return value
 
@@ -68,7 +72,7 @@ class TornadoParser(core.Parser):
         json_body = self._cache.get('json')
         if json_body is None:
             self._cache['json'] = parse_json_body(req)
-        return get_value(self._cache['json'], name, arg.multiple)
+        return get_value(self._cache['json'], name, arg.multiple, cast_to_unicode=False)
 
     def parse_querystring(self, req, name, arg):
         """Pull a querystring value from the request."""
