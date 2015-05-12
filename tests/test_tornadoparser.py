@@ -643,6 +643,15 @@ class TestValidateApp(AsyncHTTPTestCase):
         )
         assert res.code == 401
 
+    def test_required_field_provided_as_form_data(self):
+        res = self.fetch(
+            '/echo',
+            method='POST',
+            headers={'Content-Type': 'application/x-www-form-urlencoded'},
+            body=urlencode({'name': 'johnny'}),
+        )
+        json_body = parse_json(res.body)
+        assert json_body['name'] == 'johnny'
 
 if __name__ == '__main__':
     echo_app.listen(8888)
